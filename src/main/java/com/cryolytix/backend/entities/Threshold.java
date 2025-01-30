@@ -1,6 +1,6 @@
 package com.cryolytix.backend.entities;
 
-import com.cryolytix.backend.enums.SensorType;
+import com.cryolytix.backend.enums.ThresholdType;
 import com.cryolytix.backend.enums.Unit;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-public class Sensor {
+public class Threshold {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +20,13 @@ public class Sensor {
     private Device device;
 
     @Enumerated(EnumType.STRING)
-    private SensorType sensorType;  // e.g., TEMPERATURE_SENSOR_1, HUMIDITY_SENSOR_1
+    private ThresholdType thresholdType;  // SENSOR or DEVICE
+
+    private String parameterCode;  // "10800" for temperature, "21" for speed
 
     @Enumerated(EnumType.STRING)
-    private Unit unit;  // e.g., °C, %, V
+    private Unit unit;  // °C, %, V, etc.
 
-    private BigDecimal value; // The actual real-time value reported by the sensor
+    private BigDecimal minValue;
+    private BigDecimal maxValue;
 }
