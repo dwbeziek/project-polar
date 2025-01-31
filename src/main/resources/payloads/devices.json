@@ -1,0 +1,38 @@
+[
+  {
+    "imei": "356938035643809",
+    "code": "DEV-001",
+    "name": "Brackenfell Fridge",
+    "description": "Fridge monitoring in Brackenfell store"
+  },
+  {
+    "imei": "356938035643810",
+    "code": "DEV-002",
+    "name": "Constantia Freezer",
+    "description": "Frozen goods freezer in Constantia market"
+  },
+  {
+    "imei": "356938035643811",
+    "code": "DEV-003",
+    "name": "Blaauwberg Chiller",
+    "description": "Refrigerated storage in Blaauwberg"
+  },
+  {
+    "imei": "356938035643812",
+    "code": "DEV-004",
+    "name": "Ship Cargo Fridge 1",
+    "description": "Cargo ship fridge for frozen goods"
+  },
+  {
+    "imei": "356938035643813",
+    "code": "DEV-005",
+    "name": "Ship Cargo Fridge 2",
+    "description": "Secondary fridge on a container ship"
+  },
+  {
+    "imei": "356938035643814",
+    "code": "DEV-006",
+    "name": "Ship Cargo Fridge 3",
+    "description": "Additional fridge on container ship"
+  }
+]
