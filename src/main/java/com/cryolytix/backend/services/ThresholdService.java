@@ -32,7 +32,6 @@ public class ThresholdService {
             Threshold threshold = new Threshold();
             threshold.setDevice(device);
             threshold.setThresholdType(thresholdDTO.getThresholdType());
-            threshold.setParameterCode(thresholdDTO.getParameterCode());
             threshold.setUnit(thresholdDTO.getUnit());
             threshold.setMinValue(thresholdDTO.getMinValue());
             threshold.setMaxValue(thresholdDTO.getMaxValue());
@@ -55,7 +54,6 @@ public class ThresholdService {
         ThresholdDTO dto = new ThresholdDTO();
         dto.setDeviceId(threshold.getDevice().getId().toString());
         dto.setThresholdType(threshold.getThresholdType());
-        dto.setParameterCode(threshold.getParameterCode());
         dto.setUnit(threshold.getUnit());
         dto.setMinValue(threshold.getMinValue());
         dto.setMaxValue(threshold.getMaxValue());

@@ -1,8 +1,8 @@
 package com.cryolytix.backend.listeners;
 
-import com.cryolytix.backend.dto.DeviceDTO;
+import com.cryolytix.backend.dto.DeviceDataDTO;
 import com.cryolytix.backend.parsers.JsonParser;
-import com.cryolytix.backend.services.DeviceService;
+import com.cryolytix.backend.services.DeviceDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -20,7 +20,7 @@ public class MqttListener implements MqttCallback {
 
 
     private final JsonParser jsonParser;
-    private final DeviceService deviceService;
+    private final DeviceDataService deviceDataService;
 
 
     @Override
@@ -36,14 +36,14 @@ public class MqttListener implements MqttCallback {
 
         try {
             if (topic.equalsIgnoreCase("sensor/data")) {
-                DeviceDTO deviceDTO = jsonParser.parseDeviceData(payload);
+                DeviceDataDTO deviceDataDTO = jsonParser.parseDeviceData(payload);
 
-                if (deviceDTO == null) {
+                if (deviceDataDTO == null) {
                     log.warn("⚠️ Skipping message: Could not parse device data.");
                     return;
                 }
 
-                deviceService.processIncomingData(deviceDTO);
+                deviceDataService.processDeviceData(deviceDataDTO);
                 log.info("✅ Device data processed successfully.");
             } else {
                 log.warn("⚠️ Unrecognized topic `{}`. Message ignored.", topic);

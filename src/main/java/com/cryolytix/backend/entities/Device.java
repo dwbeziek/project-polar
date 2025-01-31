@@ -13,18 +13,20 @@ public class Device {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long timestamp;
-    private int pr;
-    private String latlng;
-    private int altitude;
-    private int angle;
-    private int satellites;
-    private int speed;
-    private int eventCode;
+    @Column(unique = true, nullable = false)
+    private String imei;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Sensor> sensors;
+    @Column(unique = true, nullable = false)
+    private String code;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private String name;
+
+    private String description;
+
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL)
     private List<Threshold> thresholds;
+
+//    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL)
+//    private List<Notification> notifications;
 }

@@ -1,5 +1,6 @@
 package com.cryolytix.backend.entities;
 
+import com.cryolytix.backend.enums.SensorType;
 import com.cryolytix.backend.enums.ThresholdType;
 import com.cryolytix.backend.enums.Unit;
 import jakarta.persistence.*;
@@ -20,13 +21,14 @@ public class Threshold {
     private Device device;
 
     @Enumerated(EnumType.STRING)
-    private ThresholdType thresholdType;  // SENSOR or DEVICE
-
-    private String parameterCode;  // "10800" for temperature, "21" for speed
+    private SensorType sensorType;  // E.g., TEMPERATURE, HUMIDITY, etc.
 
     @Enumerated(EnumType.STRING)
-    private Unit unit;  // °C, %, V, etc.
+    private ThresholdType thresholdType;  // E.g., HIGH, LOW, RANGE, etc.
 
-    private BigDecimal minValue;
-    private BigDecimal maxValue;
+    private BigDecimal minValue;  // Minimum threshold value
+    private BigDecimal maxValue;  // Maximum threshold value
+
+    @Enumerated(EnumType.STRING)
+    private Unit unit;   // E.g., °C, %, V, etc.
 }

@@ -1,7 +1,8 @@
 package com.cryolytix.backend.parsers;
 
 import com.cryolytix.backend.dto.DeviceDTO;
-import com.cryolytix.backend.dto.SensorDTO;
+import com.cryolytix.backend.dto.DeviceDataDTO;
+import com.cryolytix.backend.dto.SensorDataDTO;
 import com.cryolytix.backend.enums.SensorType;
 import com.cryolytix.backend.enums.Unit;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,80 +25,84 @@ public class JsonParser {
 
     private final ObjectMapper objectMapper;
 
-    public DeviceDTO parseDeviceData(String json) throws Exception {
-        JsonNode rootNode = objectMapper.readTree(json);
-        JsonNode reportedNode = rootNode.path("state").path("reported");
+    public DeviceDataDTO parseDeviceData(String json) throws Exception {
+        JsonNode node = objectMapper.readTree(json);
+        JsonNode reported = node.get("state").get("reported");
 
-        DeviceDTO deviceDTO = new DeviceDTO();
-        deviceDTO.setDeviceId(reportedNode.path("deviceId").asText());
-        deviceDTO.setTimestamp(reportedNode.path("ts").asLong());
-        deviceDTO.setPr(reportedNode.path("pr").asInt());
-        deviceDTO.setLatlng(reportedNode.path("latlng").asText());
-        deviceDTO.setAltitude(reportedNode.path("alt").asInt());
-        deviceDTO.setAngle(reportedNode.path("ang").asInt());
-        deviceDTO.setSatellites(reportedNode.path("sat").asInt());
-        deviceDTO.setSpeed(reportedNode.path("sp").asInt());
-        deviceDTO.setEventCode(reportedNode.path("evt").asInt());
+        if (reported == null) {
+            throw new IllegalArgumentException("Invalid JSON structure: 'reported' field missing");
+        }
 
-        // ✅ Extract Sensor Data
-        List<SensorDTO> sensors = extractSensors(reportedNode, deviceDTO.getDeviceId());
-        deviceDTO.setSensors(sensors);
+        DeviceDataDTO deviceDataDTO = new DeviceDataDTO();
+        deviceDataDTO.setImei(reported.has("deviceId") ? reported.get("deviceId").asText() : null);
+        deviceDataDTO.setTimestamp(
+                reported.has("ts") ? LocalDateTime.ofInstant(Instant.ofEpochMilli(reported.get("ts").asLong()), ZoneId.systemDefault()) : null);
+        deviceDataDTO.setLatitude(reported.has("latlng") ? Double.parseDouble(reported.get("latlng").asText().split(",")[0]) : 0.0);
+        deviceDataDTO.setLongitude(reported.has("latlng") ? Double.parseDouble(reported.get("latlng").asText().split(",")[1]) : 0.0);
+        deviceDataDTO.setAltitude(reported.has("alt") ? reported.get("alt").asInt() : 0);
+        deviceDataDTO.setAngle(reported.has("ang") ? reported.get("ang").asInt() : 0);
+        deviceDataDTO.setSatellites(reported.has("sat") ? reported.get("sat").asInt() : 0);
+        deviceDataDTO.setSpeed(reported.has("sp") ? reported.get("sp").asInt() : 0);
 
-        return deviceDTO;
+        // Dynamically assign available fields to DTO using reflection
+        autoAssignFields(deviceDataDTO, reported);
+
+        // Extract Sensor Data dynamically
+        deviceDataDTO.setSensorData(extractSensorData(reported));
+
+        return deviceDataDTO;
     }
 
-    public List<SensorDTO> parseSensorData(String json, String deviceId) throws Exception {
-        JsonNode rootNode = objectMapper.readTree(json);
-        JsonNode reportedNode = rootNode.path("state").path("reported");
+    private List<SensorDataDTO> extractSensorData(JsonNode reported) {
+        List<SensorDataDTO> sensorDataList = new ArrayList<>();
 
-        return extractSensors(reportedNode, deviceId);
-    }
+        // Define sensor parameter codes and their corresponding types and units
+        int[] sensorCodes = {10800, 10804, 10808, 10810, 10812, 10814, 10816};
+        SensorType[] sensorTypes = {
+                SensorType.TEMPERATURE, SensorType.HUMIDITY, SensorType.MOVEMENT_COUNT, SensorType.BATTERY_VOLTAGE,
+                SensorType.ROLL, SensorType.PITCH, SensorType.MAGNET_COUNT
+        };
+        String[] sensorUnits = {"°C", "%", "count", "V", "°", "°", "count"};
 
-    private List<SensorDTO> extractSensors(JsonNode reportedNode, String deviceId) {
-        List<SensorDTO> sensors = new ArrayList<>();
-        Iterator<String> fieldNames = reportedNode.fieldNames();
+        // Iterate over sensors dynamically
+        for (int i = 0; i < sensorCodes.length; i++) {
+            for (int sensorIndex = 0; sensorIndex < 4; sensorIndex++) {
+                int sensorCode = sensorCodes[i] + sensorIndex;
+                String sensorCodeStr = String.valueOf(sensorCode);
 
-        while (fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-
-            if (SensorType.isValidCode(fieldName)) {
-                SensorDTO sensorDTO = new SensorDTO();
-                sensorDTO.setDeviceId(deviceId);
-                sensorDTO.setParameterCode(fieldName);
-                sensorDTO.setSensorType(SensorType.fromCode(fieldName));
-                sensorDTO.setUnit(Unit.determineUnit(fieldName));
-
-                // ✅ Generic Reflection to Assign Value or Null
-                BigDecimal sensorValue = reportedNode.has(fieldName)
-                        ? BigDecimal.valueOf(reportedNode.path(fieldName).asDouble())
-                        : null;
-                sensorDTO.setValue(sensorValue);
-
-                // ✅ Set Additional Fields Dynamically
-                autoAssignFields(sensorDTO, reportedNode);
-
-                sensors.add(sensorDTO);
+                if (reported.has(sensorCodeStr)) {
+                    sensorDataList.add(new SensorDataDTO(
+                            sensorCodeStr,
+                            sensorTypes[i],
+                            new BigDecimal(String.valueOf(reported.get(sensorCodeStr))),
+                            sensorUnits[i]
+                    ));
+                }
             }
         }
-        return sensors;
+
+        return sensorDataList;
     }
 
-    private void autoAssignFields(SensorDTO sensorDTO, JsonNode reportedNode) {
-        Field[] fields = SensorDTO.class.getDeclaredFields();
-
+    /**
+     * Dynamically maps JSON fields to DeviceDataDTO fields using Reflection.
+     */
+    private void autoAssignFields(DeviceDataDTO dto, JsonNode reported) {
+        Field[] fields = DeviceDataDTO.class.getDeclaredFields();
         for (Field field : fields) {
-            field.setAccessible(true);
-
-            // Check if the field is in JSON
-            if (reportedNode.has(field.getName())) {
+            String fieldName = field.getName();
+            if (reported.has(fieldName)) {
                 try {
-                    if (field.getType().equals(BigDecimal.class)) {
-                        field.set(sensorDTO, BigDecimal.valueOf(reportedNode.path(field.getName()).asDouble()));
-                    } else if (field.getType().equals(String.class)) {
-                        field.set(sensorDTO, reportedNode.path(field.getName()).asText());
+                    field.setAccessible(true);
+                    if (field.getType().equals(String.class)) {
+                        field.set(dto, reported.get(fieldName).asText());
+                    } else if (field.getType().equals(int.class) || field.getType().equals(Integer.class)) {
+                        field.set(dto, reported.get(fieldName).asInt());
+                    } else if (field.getType().equals(double.class) || field.getType().equals(Double.class)) {
+                        field.set(dto, reported.get(fieldName).asDouble());
                     }
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Error setting field: " + field.getName(), e);
+                    System.err.println("Error assigning field: " + fieldName);
                 }
             }
         }
