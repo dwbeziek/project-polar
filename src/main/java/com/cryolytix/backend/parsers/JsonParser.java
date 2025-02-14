@@ -1,10 +1,8 @@
 package com.cryolytix.backend.parsers;
 
-import com.cryolytix.backend.dto.DeviceDTO;
-import com.cryolytix.backend.dto.DeviceDataDTO;
-import com.cryolytix.backend.dto.SensorDataDTO;
+import com.cryolytix.backend.dto.DeviceData;
+import com.cryolytix.backend.dto.SensorData;
 import com.cryolytix.backend.enums.SensorType;
-import com.cryolytix.backend.enums.Unit;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -25,7 +22,7 @@ public class JsonParser {
 
     private final ObjectMapper objectMapper;
 
-    public DeviceDataDTO parseDeviceData(String json) throws Exception {
+    public DeviceData parseDeviceData(String json) throws Exception {
         JsonNode node = objectMapper.readTree(json);
         JsonNode reported = node.get("state").get("reported");
 
@@ -33,28 +30,28 @@ public class JsonParser {
             throw new IllegalArgumentException("Invalid JSON structure: 'reported' field missing");
         }
 
-        DeviceDataDTO deviceDataDTO = new DeviceDataDTO();
-        deviceDataDTO.setImei(reported.has("deviceId") ? reported.get("deviceId").asText() : null);
-        deviceDataDTO.setTimestamp(
+        DeviceData deviceData = new DeviceData();
+        deviceData.setImei(reported.has("deviceId") ? reported.get("deviceId").asText() : null);
+        deviceData.setTimestamp(
                 reported.has("ts") ? LocalDateTime.ofInstant(Instant.ofEpochMilli(reported.get("ts").asLong()), ZoneId.systemDefault()) : null);
-        deviceDataDTO.setLatitude(reported.has("latlng") ? Double.parseDouble(reported.get("latlng").asText().split(",")[0]) : 0.0);
-        deviceDataDTO.setLongitude(reported.has("latlng") ? Double.parseDouble(reported.get("latlng").asText().split(",")[1]) : 0.0);
-        deviceDataDTO.setAltitude(reported.has("alt") ? reported.get("alt").asInt() : 0);
-        deviceDataDTO.setAngle(reported.has("ang") ? reported.get("ang").asInt() : 0);
-        deviceDataDTO.setSatellites(reported.has("sat") ? reported.get("sat").asInt() : 0);
-        deviceDataDTO.setSpeed(reported.has("sp") ? reported.get("sp").asInt() : 0);
+        deviceData.setLatitude(reported.has("latlng") ? Double.parseDouble(reported.get("latlng").asText().split(",")[0]) : 0.0);
+        deviceData.setLongitude(reported.has("latlng") ? Double.parseDouble(reported.get("latlng").asText().split(",")[1]) : 0.0);
+        deviceData.setAltitude(reported.has("alt") ? reported.get("alt").asInt() : 0);
+        deviceData.setAngle(reported.has("ang") ? reported.get("ang").asInt() : 0);
+        deviceData.setSatellites(reported.has("sat") ? reported.get("sat").asInt() : 0);
+        deviceData.setSpeed(reported.has("sp") ? reported.get("sp").asInt() : 0);
 
         // Dynamically assign available fields to DTO using reflection
-        autoAssignFields(deviceDataDTO, reported);
+        autoAssignFields(deviceData, reported);
 
         // Extract Sensor Data dynamically
-        deviceDataDTO.setSensorData(extractSensorData(reported));
+        deviceData.setSensorData(extractSensorData(reported));
 
-        return deviceDataDTO;
+        return deviceData;
     }
 
-    private List<SensorDataDTO> extractSensorData(JsonNode reported) {
-        List<SensorDataDTO> sensorDataList = new ArrayList<>();
+    private List<SensorData> extractSensorData(JsonNode reported) {
+        List<SensorData> sensorDataList = new ArrayList<>();
 
         // Define sensor parameter codes and their corresponding types and units
         int[] sensorCodes = {10800, 10804, 10808, 10810, 10812, 10814, 10816};
@@ -71,7 +68,7 @@ public class JsonParser {
                 String sensorCodeStr = String.valueOf(sensorCode);
 
                 if (reported.has(sensorCodeStr)) {
-                    sensorDataList.add(new SensorDataDTO(
+                    sensorDataList.add(new SensorData(
                             sensorCodeStr,
                             sensorTypes[i],
                             new BigDecimal(String.valueOf(reported.get(sensorCodeStr))),
@@ -87,8 +84,8 @@ public class JsonParser {
     /**
      * Dynamically maps JSON fields to DeviceDataDTO fields using Reflection.
      */
-    private void autoAssignFields(DeviceDataDTO dto, JsonNode reported) {
-        Field[] fields = DeviceDataDTO.class.getDeclaredFields();
+    private void autoAssignFields(DeviceData dto, JsonNode reported) {
+        Field[] fields = DeviceData.class.getDeclaredFields();
         for (Field field : fields) {
             String fieldName = field.getName();
             if (reported.has(fieldName)) {

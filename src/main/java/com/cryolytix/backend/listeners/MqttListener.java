@@ -1,6 +1,6 @@
 package com.cryolytix.backend.listeners;
 
-import com.cryolytix.backend.dto.DeviceDataDTO;
+import com.cryolytix.backend.dto.DeviceData;
 import com.cryolytix.backend.parsers.JsonParser;
 import com.cryolytix.backend.services.DeviceDataService;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +36,14 @@ public class MqttListener implements MqttCallback {
 
         try {
             if (topic.equalsIgnoreCase("sensor/data")) {
-                DeviceDataDTO deviceDataDTO = jsonParser.parseDeviceData(payload);
+                DeviceData deviceData = jsonParser.parseDeviceData(payload);
 
-                if (deviceDataDTO == null) {
+                if (deviceData == null) {
                     log.warn("⚠️ Skipping message: Could not parse device data.");
                     return;
                 }
 
-                deviceDataService.processDeviceData(deviceDataDTO);
+                deviceDataService.processDeviceData(deviceData);
                 log.info("✅ Device data processed successfully.");
             } else {
                 log.warn("⚠️ Unrecognized topic `{}`. Message ignored.", topic);

@@ -1,5 +1,6 @@
 package com.cryolytix.backend.entities;
 
+import com.cryolytix.backend.dto.Threshold;
 import com.cryolytix.backend.enums.SensorType;
 import com.cryolytix.backend.enums.ThresholdType;
 import com.cryolytix.backend.enums.Unit;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-public class Threshold {
+public class ThresholdEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +19,7 @@ public class Threshold {
 
     @ManyToOne
     @JoinColumn(name = "device_id", nullable = false)
-    private Device device;
+    private DeviceEntity device;
 
     @Enumerated(EnumType.STRING)
     private SensorType sensorType;  // E.g., TEMPERATURE, HUMIDITY, etc.
@@ -31,4 +32,16 @@ public class Threshold {
 
     @Enumerated(EnumType.STRING)
     private Unit unit;   // E.g., °C, %, V, etc.
+
+    public Threshold toDto() {
+        Threshold threshold = new Threshold();
+        threshold.setId(id);
+        threshold.setDeviceId(device.getId());
+        threshold.setSensorType(sensorType);
+        threshold.setThresholdType(thresholdType);
+        threshold.setMinValue(minValue);
+        threshold.setMaxValue(maxValue);
+        threshold.setUnit(unit);
+        return threshold;
+    }
 }

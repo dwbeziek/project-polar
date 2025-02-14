@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class DeviceDataDTO {
+public class DeviceData {
 
     private String imei;
     private LocalDateTime timestamp;
@@ -18,5 +18,5 @@ public class DeviceDataDTO {
     private int satellites;
     private int speed;
 
-    private List<SensorDataDTO> sensorData;
+    private List<SensorData> sensorData;
 }

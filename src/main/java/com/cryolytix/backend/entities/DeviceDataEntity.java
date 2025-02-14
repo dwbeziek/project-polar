@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Data
-public class DeviceData {
+public class DeviceDataEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class DeviceData {
 
     @ManyToOne
     @JoinColumn(name = "device_id", nullable = false)
-    private Device device;
+    private DeviceEntity device;
 
     private LocalDateTime timestamp;
     private double latitude;
@@ -26,6 +26,6 @@ public class DeviceData {
     private int satellites;
     private int speed;
 
-    @OneToMany(mappedBy = "deviceData", cascade = CascadeType.ALL)
-    private List<SensorData> sensorDataList;
+    @OneToMany(mappedBy = "deviceDataEntity", cascade = CascadeType.ALL)
+    private List<SensorDataEntity> sensorDataEntityList;
 }

@@ -1,6 +1,6 @@
 package com.cryolytix.backend.controllers;
 
-import com.cryolytix.backend.dto.ThresholdDTO;
+import com.cryolytix.backend.dto.Threshold;
 import com.cryolytix.backend.services.ThresholdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,13 @@ public class ThresholdController {
     private final ThresholdService thresholdService;
 
     @PostMapping
-    public ResponseEntity<String> addThreshold(@RequestBody ThresholdDTO thresholdDTO) {
-        thresholdService.saveThreshold(thresholdDTO);
+    public ResponseEntity<String> addThreshold(@RequestBody Threshold threshold) {
+        thresholdService.saveThreshold(threshold);
         return ResponseEntity.ok("✅ Threshold successfully added");
     }
 
     @GetMapping("/{deviceId}")
-    public ResponseEntity<List<ThresholdDTO>> getThresholds(@PathVariable Long deviceId) {
+    public ResponseEntity<List<Threshold>> getThresholds(@PathVariable Long deviceId) {
         return ResponseEntity.ok(thresholdService.getThresholdsForDevice(deviceId));
     }
 }

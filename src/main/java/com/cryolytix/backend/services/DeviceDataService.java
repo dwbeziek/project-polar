@@ -1,10 +1,10 @@
 package com.cryolytix.backend.services;
 
-import com.cryolytix.backend.dto.DeviceDataDTO;
-import com.cryolytix.backend.entities.Device;
-import com.cryolytix.backend.entities.DeviceData;
-import com.cryolytix.backend.entities.SensorData;
-import com.cryolytix.backend.entities.Threshold;
+import com.cryolytix.backend.dto.DeviceData;
+import com.cryolytix.backend.entities.DeviceEntity;
+import com.cryolytix.backend.entities.DeviceDataEntity;
+import com.cryolytix.backend.entities.SensorDataEntity;
+import com.cryolytix.backend.entities.ThresholdEntity;
 import com.cryolytix.backend.repositories.DeviceDataRepository;
 import com.cryolytix.backend.repositories.DeviceRepository;
 import com.cryolytix.backend.repositories.SensorDataRepository;
@@ -30,61 +30,61 @@ public class DeviceDataService {
     }
 
 
-    public void processDeviceData(DeviceDataDTO deviceDataDTO) {
-        Optional<Device> deviceOpt = deviceRepository.findByImei(deviceDataDTO.getImei());
+    public void processDeviceData(DeviceData deviceData) {
+        Optional<DeviceEntity> deviceOpt = deviceRepository.findByImei(deviceData.getImei());
 
         if (deviceOpt.isEmpty()) {
 //            TODO log here instead
-            System.err.println("⚠ Device not registered: " + deviceDataDTO.getImei());
+            System.err.println("⚠ Device not registered: " + deviceData.getImei());
             return;
         }
 
-        Device device = deviceOpt.get();
-        DeviceData deviceData = new DeviceData();
-        deviceData.setDevice(device);
-        deviceData.setTimestamp(deviceDataDTO.getTimestamp());
-        deviceData.setLatitude(deviceDataDTO.getLatitude());
-        deviceData.setLongitude(deviceDataDTO.getLongitude());
-        deviceData.setAltitude(deviceDataDTO.getAltitude());
-        deviceData.setAngle(deviceDataDTO.getAngle());
-        deviceData.setSatellites(deviceDataDTO.getSatellites());
-        deviceData.setSpeed(deviceDataDTO.getSpeed());
+        DeviceEntity device = deviceOpt.get();
+        DeviceDataEntity deviceDataEntity = new DeviceDataEntity();
+        deviceDataEntity.setDevice(device);
+        deviceDataEntity.setTimestamp(deviceData.getTimestamp());
+        deviceDataEntity.setLatitude(deviceData.getLatitude());
+        deviceDataEntity.setLongitude(deviceData.getLongitude());
+        deviceDataEntity.setAltitude(deviceData.getAltitude());
+        deviceDataEntity.setAngle(deviceData.getAngle());
+        deviceDataEntity.setSatellites(deviceData.getSatellites());
+        deviceDataEntity.setSpeed(deviceData.getSpeed());
 
-        deviceData = deviceDataRepository.save(deviceData);
+        deviceDataEntity = deviceDataRepository.save(deviceDataEntity);
 
-        DeviceData finalDeviceData = deviceData;
-        List<SensorData> sensorDataList = deviceDataDTO.getSensorData().stream()
+        DeviceDataEntity finalDeviceDataEntity = deviceDataEntity;
+        List<SensorDataEntity> sensorDataEntityList = deviceData.getSensorData().stream()
                 .map(sensorDTO -> {
-                    SensorData sensorData = new SensorData();
-                    sensorData.setDeviceData(finalDeviceData);
-                    sensorData.setParameterCode(sensorDTO.getParameterCode());
-                    sensorData.setSensorType(sensorDTO.getSensorType());
-                    sensorData.setValue(sensorDTO.getValue());
-                    sensorData.setUnit(sensorDTO.getUnit());
+                    SensorDataEntity sensorDataEntity = new SensorDataEntity();
+                    sensorDataEntity.setDeviceDataEntity(finalDeviceDataEntity);
+                    sensorDataEntity.setParameterCode(sensorDTO.getParameterCode());
+                    sensorDataEntity.setSensorType(sensorDTO.getSensorType());
+                    sensorDataEntity.setValue(sensorDTO.getValue());
+                    sensorDataEntity.setUnit(sensorDTO.getUnit());
 
                     // 🚨 CHECK THRESHOLDS
-                    checkThresholdAndTriggerAlert(device, sensorData);
+                    checkThresholdAndTriggerAlert(device, sensorDataEntity);
 
-                    return sensorData;
+                    return sensorDataEntity;
                 }).toList();
 
-        sensorDataRepository.saveAll(sensorDataList);
+        sensorDataRepository.saveAll(sensorDataEntityList);
     }
 
     /**
      * Checks if the sensor value is outside the allowed range and triggers an alert.
      */
-    private void checkThresholdAndTriggerAlert(Device device, SensorData sensorData) {
-        Optional<Threshold> thresholdOpt = thresholdRepository.findByDeviceAndSensorType(device, sensorData.getSensorType());
+    private void checkThresholdAndTriggerAlert(DeviceEntity device, SensorDataEntity sensorDataEntity) {
+        Optional<ThresholdEntity> thresholdOpt = thresholdRepository.findByDeviceAndSensorType(device, sensorDataEntity.getSensorType());
 
         if (thresholdOpt.isPresent()) {
-            Threshold threshold = thresholdOpt.get();
+            ThresholdEntity thresholdEntity = thresholdOpt.get();
 
-            if ((sensorData.getValue().compareTo(threshold.getMinValue()) < 0) || (sensorData.getValue().compareTo(threshold.getMaxValue()) > 0)) {
+            if ((sensorDataEntity.getValue().compareTo(thresholdEntity.getMinValue()) < 0) || (sensorDataEntity.getValue().compareTo(thresholdEntity.getMaxValue()) > 0)) {
                 // 🚨 Sensor is outside threshold → Send Notification
-                String alertMessage = "ALERT: " + sensorData.getSensorType() + " for device " + device.getName() +
-                        " is outside the threshold! Current value: " + sensorData.getValue() +
-                        " (Expected: " + threshold.getMinValue() + " - " + threshold.getMaxValue() + ")";
+                String alertMessage = "ALERT: " + sensorDataEntity.getSensorType() + " for device " + device.getName() +
+                        " is outside the threshold! Current value: " + sensorDataEntity.getValue() +
+                        " (Expected: " + thresholdEntity.getMinValue() + " - " + thresholdEntity.getMaxValue() + ")";
 
 //                notificationService.sendAlert(alertMessage, device);
             }

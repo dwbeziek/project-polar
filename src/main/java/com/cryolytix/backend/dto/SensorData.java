@@ -6,9 +6,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class SensorDataDTO {
+public class SensorData {
 
-    public SensorDataDTO(String sensorCodeStr, SensorType sensorType, BigDecimal value, String sensorUnit) {
+    public SensorData(String sensorCodeStr, SensorType sensorType, BigDecimal value, String sensorUnit) {
         this.parameterCode = sensorCodeStr;
         this.sensorType = sensorType;
         this.value = value;

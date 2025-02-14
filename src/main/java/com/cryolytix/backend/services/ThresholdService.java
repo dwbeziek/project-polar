@@ -1,8 +1,8 @@
 package com.cryolytix.backend.services;
 
-import com.cryolytix.backend.dto.ThresholdDTO;
-import com.cryolytix.backend.entities.Device;
-import com.cryolytix.backend.entities.Threshold;
+import com.cryolytix.backend.dto.Threshold;
+import com.cryolytix.backend.entities.DeviceEntity;
+import com.cryolytix.backend.entities.ThresholdEntity;
 import com.cryolytix.backend.repositories.DeviceRepository;
 import com.cryolytix.backend.repositories.ThresholdRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,40 +23,40 @@ public class ThresholdService {
     private final DeviceRepository deviceRepository;
 
     @Transactional
-    public void saveThreshold(ThresholdDTO thresholdDTO) {
-        Optional<Device> deviceOpt = deviceRepository.findById(Long.parseLong(thresholdDTO.getDeviceId()));
+    public void saveThreshold(Threshold threshold) {
+        Optional<DeviceEntity> deviceOpt = deviceRepository.findById(threshold.getDeviceId());
 
         if (deviceOpt.isPresent()) {
-            Device device = deviceOpt.get();
+            DeviceEntity device = deviceOpt.get();
 
-            Threshold threshold = new Threshold();
-            threshold.setDevice(device);
-            threshold.setThresholdType(thresholdDTO.getThresholdType());
-            threshold.setUnit(thresholdDTO.getUnit());
-            threshold.setMinValue(thresholdDTO.getMinValue());
-            threshold.setMaxValue(thresholdDTO.getMaxValue());
+            ThresholdEntity thresholdEntity = new ThresholdEntity();
+            thresholdEntity.setDevice(device);
+            thresholdEntity.setThresholdType(threshold.getThresholdType());
+            thresholdEntity.setUnit(threshold.getUnit());
+            thresholdEntity.setMinValue(threshold.getMinValue());
+            thresholdEntity.setMaxValue(threshold.getMaxValue());
 
-            thresholdRepository.save(threshold);
-            log.info("✅ Threshold saved: {}", threshold);
+            thresholdRepository.save(thresholdEntity);
+            log.info("✅ Threshold saved: {}", thresholdEntity);
         } else {
-            log.warn("❌ Device not found for Threshold Data: {}", thresholdDTO);
+            log.warn("❌ Device not found for Threshold Data: {}", threshold);
         }
     }
 
-    public List<ThresholdDTO> getThresholdsForDevice(Long deviceId) {
+    public List<Threshold> getThresholdsForDevice(Long deviceId) {
         return thresholdRepository.findByDeviceId(deviceId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    private ThresholdDTO convertToDTO(Threshold threshold) {
-        ThresholdDTO dto = new ThresholdDTO();
-        dto.setDeviceId(threshold.getDevice().getId().toString());
-        dto.setThresholdType(threshold.getThresholdType());
-        dto.setUnit(threshold.getUnit());
-        dto.setMinValue(threshold.getMinValue());
-        dto.setMaxValue(threshold.getMaxValue());
+    private Threshold convertToDTO(ThresholdEntity thresholdEntity) {
+        Threshold dto = new Threshold();
+        dto.setDeviceId(thresholdEntity.getDevice().getId());
+        dto.setThresholdType(thresholdEntity.getThresholdType());
+        dto.setUnit(thresholdEntity.getUnit());
+        dto.setMinValue(thresholdEntity.getMinValue());
+        dto.setMaxValue(thresholdEntity.getMaxValue());
         return dto;
     }
 }

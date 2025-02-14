@@ -1,5 +1,5 @@
 -- Insert Thresholds Using ENUMs
-INSERT INTO threshold (device_id, sensor_type, threshold_type, min_value, max_value, unit) VALUES
+INSERT INTO thresholdEntity (device_id, sensor_type, threshold_type, min_value, max_value, unit) VALUES
 -- Brackenfell Fridge
 (1, 'TEMPERATURE', 'RANGE', -5.0, 5.0, 'CELSIUS'),
 (1, 'HUMIDITY', 'RANGE', 30.0, 70.0, 'PERCENT'),

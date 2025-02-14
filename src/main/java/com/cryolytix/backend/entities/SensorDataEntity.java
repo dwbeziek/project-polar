@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-public class SensorData {
+public class SensorDataEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class SensorData {
 
     @ManyToOne
     @JoinColumn(name = "device_data_id", nullable = false)
-    private DeviceData deviceData;
+    private DeviceDataEntity deviceDataEntity;
 
     private String parameterCode; // The actual sensor parameter code (e.g., "10800" for temperature)
 

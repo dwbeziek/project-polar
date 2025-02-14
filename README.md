@@ -47,7 +47,7 @@ Please see [LICENSE.md](./LICENSE.md) for the full license agreement.
 1. Data Collection: Sensors installed on refrigerators/freezers collect data such as temperature, voltage, and location.
 2. Data Transmission: The sensor data is transmitted to the backend via an MQTT broker.
 3. Data Processing: The backend system processes the incoming data and stores it in the appropriate databases.
-4. Alerts and Notifications: Users receive real-time alerts if the system detects an anomaly (e.g., temperature exceeds a threshold).
+4. Alerts and Notifications: Users receive real-time alerts if the system detects an anomaly (e.g., temperature exceeds a thresholdEntity).
 5. Analytics Dashboard: Users can log into the Cryolytix dashboard to view historical data, generate reports, and manage devices.
 
 ## 🚀 Business Use Cases
