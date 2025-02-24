@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/device")
+@RequestMapping("/devices")
 public class DeviceController {
 
     private final DeviceService deviceService;
@@ -17,7 +17,7 @@ public class DeviceController {
         this.deviceService = deviceService;
     }
 
-    @GetMapping("/list")
+    @GetMapping()
     public ResponseEntity<List<Device>> getAllDevices() {
         return ResponseEntity.ok(deviceService.getAllDevices());
 
