@@ -1,16 +1,11 @@
 package com.cryolytix.backend.services;
 
 import com.cryolytix.backend.dto.DeviceData;
-import com.cryolytix.backend.entities.DeviceEntity;
-import com.cryolytix.backend.entities.DeviceDataEntity;
-import com.cryolytix.backend.entities.SensorDataEntity;
-import com.cryolytix.backend.entities.ThresholdEntity;
-import com.cryolytix.backend.repositories.DeviceDataRepository;
-import com.cryolytix.backend.repositories.DeviceRepository;
-import com.cryolytix.backend.repositories.SensorDataRepository;
-import com.cryolytix.backend.repositories.ThresholdRepository;
+import com.cryolytix.backend.entities.*;
+import com.cryolytix.backend.repositories.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +16,15 @@ public class DeviceDataService {
     private final DeviceRepository deviceRepository;
     private final SensorDataRepository sensorDataRepository;
     private final ThresholdRepository thresholdRepository;
+    private final NotificationRepository notificationRepository;
 
-    public DeviceDataService(DeviceDataRepository deviceDataRepository, DeviceRepository deviceRepository, SensorDataRepository sensorDataRepository, ThresholdRepository thresholdRepository) {
+    public DeviceDataService(DeviceDataRepository deviceDataRepository, DeviceRepository deviceRepository,
+                             SensorDataRepository sensorDataRepository, ThresholdRepository thresholdRepository, NotificationRepository notificationRepository) {
         this.deviceDataRepository = deviceDataRepository;
         this.deviceRepository = deviceRepository;
         this.sensorDataRepository = sensorDataRepository;
         this.thresholdRepository = thresholdRepository;
+        this.notificationRepository = notificationRepository;
     }
 
 
@@ -86,9 +84,15 @@ public class DeviceDataService {
                         " is outside the threshold! Current value: " + sensorDataEntity.getValue() +
                         " (Expected: " + thresholdEntity.getMinValue() + " - " + thresholdEntity.getMaxValue() + ")";
 
-//                notificationService.sendAlert(alertMessage, device);
+                NotificationEntity notification = new NotificationEntity();
+                notification.setDevice(device);
+                notification.setMessage(alertMessage);
+                notification.setRead(false);
+                notification.setTimestamp(LocalDateTime.now());
+                notificationRepository.save(notification);
+                System.out.printf("Notification sent: {%s}", alertMessage);
+
             }
         }
     }
-
 }

@@ -1,7 +1,6 @@
 package com.cryolytix.backend.controllers;
 
 import com.cryolytix.backend.dto.Device;
-import com.cryolytix.backend.model.DeviceResponse;
 import com.cryolytix.backend.services.DeviceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,19 +8,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/devices")
-public class DeviceController {
+@RequestMapping("/api/device-data")
+public class DeviceDataController {
 
     private final DeviceService deviceService;
 
-    public DeviceController(DeviceService deviceService) {
+    public DeviceDataController(DeviceService deviceService) {
         this.deviceService = deviceService;
     }
 
-    @GetMapping("")
-    public DeviceResponse getDevices(@RequestParam(required = false) String search) {
-        List<Device> devices = deviceService.getAllDevices();
-        return new DeviceResponse(devices);
+    @GetMapping()
+    public ResponseEntity<List<Device>> getAllDevices() {
+        return ResponseEntity.ok(deviceService.getAllDevices());
 
     }
 
@@ -49,7 +47,7 @@ public class DeviceController {
 //                .orElse(ResponseEntity.notFound().build());
 //    }
 
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<Device> createDevice(@RequestBody Device device) {
         return ResponseEntity.ok(deviceService.createDevice(device));
     }

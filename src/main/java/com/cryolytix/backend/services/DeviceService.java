@@ -60,6 +60,10 @@ public class DeviceService {
         return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
     }
 
+    public List<Device> getDevices(String search) {
+        return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
+    }
+
     public void deleteDevice(Long id) {
         Optional<DeviceEntity> deviceOptional = deviceRepository.findById(id);
         if (!deviceOptional.isPresent()) {
