@@ -7,6 +7,7 @@ import com.cryolytix.backend.entities.ThresholdEntity;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,7 +24,7 @@ public class DeviceData {
     private int satellites;
     private int speed;
 
-    private List<SensorData> sensorData;
+    private List<SensorData> sensorData = new ArrayList<>();;
 
     public DeviceData() {
     }
