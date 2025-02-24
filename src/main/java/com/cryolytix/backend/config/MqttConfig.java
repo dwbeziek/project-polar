@@ -49,14 +49,14 @@ public class MqttConfig {
 
         // Connect to the broker
         client.connect(options);
-        log.info("✅ Connected to MQTT Broker: {}", BROKER_URL);
+        log.debug("✅ Connected to MQTT Broker: {}", BROKER_URL);
 
         // Set MQTT callback listener
         client.setCallback(mqttListener);
 
         // Subscribe to topic & process data
         client.subscribe(SENSOR_TOPIC);
-        log.info("📡 Subscribed to MQTT topic: {}", SENSOR_TOPIC);
+        log.debug("📡 Subscribed to MQTT topic: {}", SENSOR_TOPIC);
 
         return client;
     }

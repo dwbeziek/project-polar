@@ -32,7 +32,7 @@ public class MqttListener implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) {
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
-        log.info("📩 Received MQTT Message on topic `{}`: {}", topic, payload);
+        log.debug("📩 Received MQTT Message on topic `{}`: {}", topic, payload);
 
         try {
             if (topic.equalsIgnoreCase("sensor/data")) {
@@ -44,7 +44,7 @@ public class MqttListener implements MqttCallback {
                 }
 
                 deviceDataService.processDeviceData(deviceData);
-                log.info("✅ Device data processed successfully.");
+                log.debug("✅ Device data processed successfully.");
             } else {
                 log.warn("⚠️ Unrecognized topic `{}`. Message ignored.", topic);
             }
@@ -55,6 +55,6 @@ public class MqttListener implements MqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        log.info("✅ MQTT Message delivered successfully.");
+        log.debug("✅ MQTT Message delivered successfully.");
     }
 }

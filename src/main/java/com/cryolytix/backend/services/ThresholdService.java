@@ -37,7 +37,7 @@ public class ThresholdService {
             thresholdEntity.setMaxValue(threshold.getMaxValue());
 
             thresholdRepository.save(thresholdEntity);
-            log.info("✅ Threshold saved: {}", thresholdEntity);
+            log.debug("✅ Threshold saved: {}", thresholdEntity);
         } else {
             log.warn("❌ Device not found for Threshold Data: {}", threshold);
         }
