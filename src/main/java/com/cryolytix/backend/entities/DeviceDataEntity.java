@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,7 +29,7 @@ public class DeviceDataEntity {
     private int speed;
 
     @OneToMany(mappedBy = "deviceDataEntity", cascade = CascadeType.ALL)
-    private List<SensorDataEntity> sensorDataEntityList;
+    private List<SensorDataEntity> sensorDataEntityList = new ArrayList<>();
 
     public DeviceData toDto() {
         DeviceData deviceData = new DeviceData();
@@ -42,6 +43,11 @@ public class DeviceDataEntity {
         deviceData.setAngle(angle);
         deviceData.setSatellites(satellites);
         deviceData.setSpeed(speed);
+
+//        TODO - Darrol fix th epopualtyion of sensor data
+        for (SensorDataEntity sensorDataEntity : sensorDataEntityList) {
+            deviceData.getSensorData().add(sensorDataEntity.toDto());
+        }
 
         return deviceData;
     }
