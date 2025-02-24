@@ -1,5 +1,6 @@
 package com.cryolytix.backend.entities;
 
+import com.cryolytix.backend.dto.SensorData;
 import com.cryolytix.backend.enums.SensorType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -26,6 +27,17 @@ public class SensorDataEntity {
     private BigDecimal value; // Sensor value (temperature, humidity, etc.)
 
     private String unit; // °C, %, V, etc.
+
+    public SensorData toDto() {
+        SensorData sensorData = new SensorData();
+        sensorData.setId(id);
+        sensorData.setDeviceDataId(deviceDataEntity.getId());
+        sensorData.setParameterCode(parameterCode);
+        sensorData.setSensorType(sensorType);
+        sensorData.setValue(value);
+        sensorData.setUnit(unit);
+        return sensorData;
+    }
 
 
 }

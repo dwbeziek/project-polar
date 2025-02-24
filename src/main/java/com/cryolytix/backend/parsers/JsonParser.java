@@ -68,7 +68,7 @@ public class JsonParser {
                 String sensorCodeStr = String.valueOf(sensorCode);
 
                 if (reported.has(sensorCodeStr)) {
-                    sensorDataList.add(new SensorData(
+                    sensorDataList.add(new SensorData(null, null,
                             sensorCodeStr,
                             sensorTypes[i],
                             new BigDecimal(String.valueOf(reported.get(sensorCodeStr))),

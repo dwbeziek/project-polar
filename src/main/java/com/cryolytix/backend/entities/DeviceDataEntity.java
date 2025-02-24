@@ -1,5 +1,6 @@
 package com.cryolytix.backend.entities;
 
+import com.cryolytix.backend.dto.DeviceData;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,4 +29,20 @@ public class DeviceDataEntity {
 
     @OneToMany(mappedBy = "deviceDataEntity", cascade = CascadeType.ALL)
     private List<SensorDataEntity> sensorDataEntityList;
+
+    public DeviceData toDto() {
+        DeviceData deviceData = new DeviceData();
+        deviceData.setId(id);
+        deviceData.setDeviceId(device.getId());
+        deviceData.setImei(device.getImei());
+        deviceData.setTimestamp(timestamp);
+        deviceData.setLatitude(latitude);
+        deviceData.setLongitude(longitude);
+        deviceData.setAltitude(altitude);
+        deviceData.setAngle(angle);
+        deviceData.setSatellites(satellites);
+        deviceData.setSpeed(speed);
+
+        return deviceData;
+    }
 }

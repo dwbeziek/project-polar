@@ -70,20 +70,28 @@ public class DeviceDataService {
         sensorDataRepository.saveAll(sensorDataEntityList);
     }
 
-    public List<DeviceDataEntity> getLatestDeviceData(Long deviceId) {
-        return deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(deviceId);
+    public List<DeviceData> getLatestDeviceData(Long deviceId) {
+        List<DeviceDataEntity> deviceData = deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(deviceId);
+        return deviceData.stream()
+                .map(DeviceDataEntity::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<DeviceDataEntity> getDeviceDataHistory(Long deviceId) {
-        return deviceDataRepository.findByDeviceIdOrderByTimestampDesc(deviceId);
+    public List<DeviceData> getDeviceDataHistory(Long deviceId) {
+        List<DeviceDataEntity> deviceData = deviceDataRepository.findByDeviceIdOrderByTimestampDesc(deviceId);
+        return deviceData.stream()
+                .map(DeviceDataEntity::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<DeviceDataEntity> getAllLatestDeviceData() {
+    public List<DeviceData> getAllLatestDeviceData() {
         List<DeviceEntity> devices = deviceRepository.findAll();
         return devices.stream()
-                .map(device -> deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(device.getId()))
-                .filter(list -> !list.isEmpty())
-                .map(list -> list.get(0)) // Get the single latest entry
+                .map(device -> {
+                    List<DeviceDataEntity> latest = deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(device.getId());
+                    return latest.isEmpty() ? null : latest.get(0).toDto();
+                })
+                .filter(dto -> dto != null)
                 .collect(Collectors.toList());
     }
 
