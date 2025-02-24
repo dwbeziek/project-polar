@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DeviceDataService {
@@ -67,6 +68,23 @@ public class DeviceDataService {
                 }).toList();
 
         sensorDataRepository.saveAll(sensorDataEntityList);
+    }
+
+    public List<DeviceDataEntity> getLatestDeviceData(Long deviceId) {
+        return deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(deviceId);
+    }
+
+    public List<DeviceDataEntity> getDeviceDataHistory(Long deviceId) {
+        return deviceDataRepository.findByDeviceIdOrderByTimestampDesc(deviceId);
+    }
+
+    public List<DeviceDataEntity> getAllLatestDeviceData() {
+        List<DeviceEntity> devices = deviceRepository.findAll();
+        return devices.stream()
+                .map(device -> deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(device.getId()))
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.get(0)) // Get the single latest entry
+                .collect(Collectors.toList());
     }
 
     /**

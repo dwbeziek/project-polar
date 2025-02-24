@@ -1,66 +1,39 @@
 package com.cryolytix.backend.controllers;
 
-import com.cryolytix.backend.dto.Device;
-import com.cryolytix.backend.services.DeviceService;
+import com.cryolytix.backend.model.DeviceDataResponse;
+import com.cryolytix.backend.services.DeviceDataService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/device-data")
 public class DeviceDataController {
 
-    private final DeviceService deviceService;
+    private final DeviceDataService deviceDataService;
 
-    public DeviceDataController(DeviceService deviceService) {
-        this.deviceService = deviceService;
+    public DeviceDataController(DeviceDataService deviceDataService) {
+        this.deviceDataService = deviceDataService;
     }
 
-    @GetMapping()
-    public ResponseEntity<List<Device>> getAllDevices() {
-        return ResponseEntity.ok(deviceService.getAllDevices());
-
+    @GetMapping("/{deviceId}/latest")
+    public ResponseEntity<DeviceDataResponse> getLatestDeviceData(@PathVariable Long deviceId) {
+        var latest = deviceDataService.getLatestDeviceData(deviceId);
+        return latest.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(new DeviceDataResponse(latest));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Device> getDeviceById(@PathVariable Long id) {
-        return deviceService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/{deviceId}")
+    public DeviceDataResponse getDeviceDataHistory(@PathVariable Long deviceId) {
+        var history = deviceDataService.getDeviceDataHistory(deviceId);
+        return new DeviceDataResponse(history);
     }
 
-    @GetMapping("/byImei/{imei}")
-    public ResponseEntity<Device> getDeviceByImei(@PathVariable String imei) {
-        return deviceService.findByImei(imei)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-//    @GetMapping("/search")
-//    public ResponseEntity<List<Device>> searchDevices(@RequestParam String code,
-//                                                      @RequestParam String name,
-//                                                      @RequestParam String description) {
-////        TODO - setup parameters
-//        return deviceService.search(code, name, description)
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
-
-    @PostMapping()
-    public ResponseEntity<Device> createDevice(@RequestBody Device device) {
-        return ResponseEntity.ok(deviceService.createDevice(device));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Device> updateDevice(@PathVariable Long id, @RequestBody Device device) {
-        return ResponseEntity.ok(deviceService.updateDevice(id, device));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
-        deviceService.deleteDevice(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/live")
+    public DeviceDataResponse getAllLatestDeviceData() {
+        var liveData = deviceDataService.getAllLatestDeviceData();
+        return new DeviceDataResponse(liveData);
     }
 
 }
