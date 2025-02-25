@@ -3,6 +3,7 @@ package com.cryolytix.backend.services;
 import com.cryolytix.backend.dto.DeviceData;
 import com.cryolytix.backend.entities.*;
 import com.cryolytix.backend.repositories.*;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -71,8 +72,12 @@ public class DeviceDataService {
     }
 
     public List<DeviceData> getLatestDeviceData(Long deviceId) {
-        List<DeviceDataEntity> deviceData = deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(deviceId);
-        return deviceData.stream()
+        return deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(deviceId)
+                .stream()
+                .peek(deviceDataEntity -> {
+                    Hibernate.initialize(deviceDataEntity.getDevice().getThresholdEntities());
+                    Hibernate.initialize(deviceDataEntity.getDevice().getNotifications());
+                })
                 .map(DeviceDataEntity::toDto)
                 .collect(Collectors.toList());
     }
@@ -97,9 +102,13 @@ public class DeviceDataService {
                 startTime = LocalDateTime.now().minusHours(1);
                 limit = 12;
         }
-       return deviceDataRepository.findByDeviceIdAndTimestampAfterOrderByTimestampDesc(deviceId, startTime)
+        return deviceDataRepository.findByDeviceIdAndTimestampAfterOrderByTimestampDesc(deviceId, startTime)
                 .stream()
-               .limit(limit)
+                .limit(limit)
+                .peek(deviceDataEntity -> {
+                    Hibernate.initialize(deviceDataEntity.getDevice().getThresholdEntities());
+                    Hibernate.initialize(deviceDataEntity.getDevice().getNotifications());
+                })
                 .map(DeviceDataEntity::toDto)
                 .collect(Collectors.toList());
     }
