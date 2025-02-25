@@ -3,10 +3,7 @@ package com.cryolytix.backend.controllers;
 import com.cryolytix.backend.model.DeviceDataResponse;
 import com.cryolytix.backend.services.DeviceDataService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -34,10 +31,11 @@ public class DeviceDataController {
     }
 
     @GetMapping("/{deviceId}/history")
-    public DeviceDataResponse getDeviceDataHistory(@PathVariable("deviceId") String deviceId) {
+    public DeviceDataResponse getDeviceDataHistory(@PathVariable("deviceId") String deviceId,
+                                                   @RequestParam(defaultValue = "1h") String period) {
         try {
             Long id = Long.parseLong(deviceId);
-            var history = deviceDataService.getDeviceDataHistory(id);
+            var history = deviceDataService.getDeviceDataHistory(id, period);
              return new DeviceDataResponse(history);
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(new DeviceDataResponse(Collections.emptyList())).getBody();

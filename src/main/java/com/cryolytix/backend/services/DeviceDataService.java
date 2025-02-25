@@ -77,9 +77,29 @@ public class DeviceDataService {
                 .collect(Collectors.toList());
     }
 
-    public List<DeviceData> getDeviceDataHistory(Long deviceId) {
-        List<DeviceDataEntity> deviceData = deviceDataRepository.findByDeviceIdOrderByTimestampDesc(deviceId);
-        return deviceData.stream()
+    public List<DeviceData> getDeviceDataHistory(Long deviceId, String period) {
+        LocalDateTime startTime;
+        int limit;
+        switch (period.toLowerCase()) {
+            case "1h":
+                startTime = LocalDateTime.now().minusHours(1);
+                limit = 12; // ~1 point every 5 mins
+                break;
+            case "24h":
+                startTime = LocalDateTime.now().minusHours(24);
+                limit = 24; // ~1 point per hour
+                break;
+            case "1w":
+                startTime = LocalDateTime.now().minusWeeks(1);
+                limit = 28; // ~4 points per day
+                break;
+            default:
+                startTime = LocalDateTime.now().minusHours(1);
+                limit = 12;
+        }
+       return deviceDataRepository.findByDeviceIdAndTimestampAfterOrderByTimestampDesc(deviceId, startTime)
+                .stream()
+               .limit(limit)
                 .map(DeviceDataEntity::toDto)
                 .collect(Collectors.toList());
     }
