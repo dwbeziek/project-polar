@@ -33,7 +33,7 @@ public class DeviceDataController {
         }
     }
 
-    @GetMapping("/{deviceId}")
+    @GetMapping("/{deviceId}/history")
     public DeviceDataResponse getDeviceDataHistory(@PathVariable("deviceId") String deviceId) {
         try {
             Long id = Long.parseLong(deviceId);
