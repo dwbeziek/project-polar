@@ -3,6 +3,7 @@ package com.cryolytix.backend.services;
 import com.cryolytix.backend.dto.DeviceData;
 import com.cryolytix.backend.entities.*;
 import com.cryolytix.backend.repositories.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DeviceDataService {
 
     private final DeviceDataRepository deviceDataRepository;
@@ -19,15 +21,6 @@ public class DeviceDataService {
     private final SensorDataRepository sensorDataRepository;
     private final ThresholdRepository thresholdRepository;
     private final NotificationRepository notificationRepository;
-
-    public DeviceDataService(DeviceDataRepository deviceDataRepository, DeviceRepository deviceRepository,
-                             SensorDataRepository sensorDataRepository, ThresholdRepository thresholdRepository, NotificationRepository notificationRepository) {
-        this.deviceDataRepository = deviceDataRepository;
-        this.deviceRepository = deviceRepository;
-        this.sensorDataRepository = sensorDataRepository;
-        this.thresholdRepository = thresholdRepository;
-        this.notificationRepository = notificationRepository;
-    }
 
 
     public void processDeviceData(DeviceData deviceData) {
@@ -107,6 +100,7 @@ public class DeviceDataService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<DeviceData> getAllLatestDeviceData() {
         List<DeviceEntity> devices = deviceRepository.findAll();
         return devices.stream()

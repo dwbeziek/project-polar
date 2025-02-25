@@ -20,16 +20,16 @@ public class DeviceController {
 
     @GetMapping("")
     public DeviceResponse getDevices(@RequestParam(required = false) String search) {
-        List<Device> devices = deviceService.getAllDevices();
+        List<Device> devices = deviceService.getDevices(search);
         return new DeviceResponse(devices);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Device> getDeviceById(@PathVariable("id") String id) {
+    public ResponseEntity<Device> getDevice(@PathVariable("id") String id) {
         try {
             Long deviceId = Long.parseLong(id);
-            return deviceService.findById(deviceId)
+            return deviceService.getDevice(deviceId)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (NumberFormatException e) {
@@ -37,22 +37,13 @@ public class DeviceController {
         }
     }
 
-    @GetMapping("/byImei/{imei}")
-    public ResponseEntity<Device> getDeviceByImei(@PathVariable String imei) {
-        return deviceService.findByImei(imei)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-//    @GetMapping("/search")
-//    public ResponseEntity<List<Device>> searchDevices(@RequestParam String code,
-//                                                      @RequestParam String name,
-//                                                      @RequestParam String description) {
-////        TODO - setup parameters
-//        return deviceService.search(code, name, description)
+//    @GetMapping("/byImei/{imei}")
+//    public ResponseEntity<Device> getDeviceByImei(@PathVariable String imei) {
+//        return deviceService.getDeviceByImei(imei)
 //                .map(ResponseEntity::ok)
 //                .orElse(ResponseEntity.notFound().build());
 //    }
+
 
     @PostMapping("")
     public ResponseEntity<Device> createDevice(@RequestBody Device device) {

@@ -1,6 +1,5 @@
 package com.cryolytix.backend.services;
 
-import aj.org.objectweb.asm.commons.Remapper;
 import com.cryolytix.backend.dto.Device;
 import com.cryolytix.backend.entities.DeviceEntity;
 import com.cryolytix.backend.exceptions.ResourceNotFoundException;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,23 +61,19 @@ public class DeviceService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Device> findByImei(String imei) {
-        return deviceRepository.findByImei(imei).map(DeviceEntity::toDto);
+    public List<Device> getDevices(String search) {
+        return ObjectUtils.isEmpty(search) ? deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList())
+                : deviceRepository.findByNameContainingIgnoreCase(search).stream().map(DeviceEntity::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Optional<Device> findById(Long id) {
+    public Optional<Device> getDevice(Long id) {
         return deviceRepository.findById(id).map(DeviceEntity::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<Device> getAllDevices() {
-        return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<Device> getDevices(String search) {
-        return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
+    public Optional<Device> getDeviceByImei(String imei) {
+        return deviceRepository.findByImei(imei).map(DeviceEntity::toDto);
     }
 
 }

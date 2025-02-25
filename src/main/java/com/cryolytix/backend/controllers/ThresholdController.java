@@ -15,14 +15,9 @@ public class ThresholdController {
 
     private final ThresholdService thresholdService;
 
-    @PostMapping
-    public ResponseEntity<String> addThreshold(@RequestBody Threshold threshold) {
-        thresholdService.saveThreshold(threshold);
-        return ResponseEntity.ok("✅ Threshold successfully added");
-    }
-
-    @GetMapping("/{deviceId}")
+    @GetMapping("/device/{deviceId}")
     public ResponseEntity<List<Threshold>> getThresholds(@PathVariable Long deviceId) {
         return ResponseEntity.ok(thresholdService.getThresholdsForDevice(deviceId));
     }
+
 }

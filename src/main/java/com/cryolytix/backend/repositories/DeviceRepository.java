@@ -13,7 +13,6 @@ public interface DeviceRepository extends JpaRepository<DeviceEntity, Long> {
 
     Optional<DeviceEntity> findByImei(String imei);
 
-    @Query("SELECT d FROM DeviceEntity d WHERE UPPER(d.name) LIKE UPPER(CONCAT('%', :search, '%'))")
     List<DeviceEntity> findByNameContainingIgnoreCase(String search);
 
 

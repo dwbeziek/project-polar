@@ -46,17 +46,8 @@ public class ThresholdService {
     public List<Threshold> getThresholdsForDevice(Long deviceId) {
         return thresholdRepository.findByDeviceId(deviceId)
                 .stream()
-                .map(this::convertToDTO)
+                .map(ThresholdEntity::toDto)
                 .collect(Collectors.toList());
     }
 
-    private Threshold convertToDTO(ThresholdEntity thresholdEntity) {
-        Threshold dto = new Threshold();
-        dto.setDeviceId(thresholdEntity.getDevice().getId());
-        dto.setThresholdType(thresholdEntity.getThresholdType());
-        dto.setUnit(thresholdEntity.getUnit());
-        dto.setMinValue(thresholdEntity.getMinValue());
-        dto.setMaxValue(thresholdEntity.getMaxValue());
-        return dto;
-    }
 }
