@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface SensorDataRepository extends JpaRepository<SensorDataEntity, Long> {
 
-//    List<SensorDataEntity> findByDeviceDataId(Long deviceDataId);
 
 }

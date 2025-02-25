@@ -29,19 +29,4 @@ public class DeviceData {
     public DeviceData() {
     }
 
-    public DeviceData(DeviceDataEntity entity) {
-        this.id = entity.getId();
-        this.deviceId = entity.getDevice().getId();
-        this.imei = entity.getDevice().getImei();
-        this.timestamp = entity.getTimestamp();
-        this.latitude = entity.getLatitude();
-        this.longitude = entity.getLongitude();
-        this.altitude = entity.getAltitude();
-        this.angle = entity.getAngle();
-        this.satellites = entity.getSatellites();
-        this.speed = entity.getSpeed();
-        for (SensorDataEntity sensorDataEntity : entity.getSensorDataEntityList()) {
-            this.getSensorData().add(sensorDataEntity.toDto());
-        }
-    }
 }

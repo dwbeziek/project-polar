@@ -11,13 +11,10 @@ import java.util.Optional;
 @Repository
 public interface DeviceRepository extends JpaRepository<DeviceEntity, Long> {
 
-    @Query("SELECT d FROM DeviceEntity d LEFT JOIN FETCH d.thresholdEntities LEFT JOIN FETCH d.notifications WHERE UPPER(d.imei) LIKE UPPER(:imei)")
     Optional<DeviceEntity> findByImei(String imei);
 
-    @Query("SELECT d FROM DeviceEntity d LEFT JOIN FETCH d.thresholdEntities LEFT JOIN FETCH d.notifications WHERE UPPER(d.name) LIKE UPPER(CONCAT('%', :search, '%'))")
+    @Query("SELECT d FROM DeviceEntity d WHERE UPPER(d.name) LIKE UPPER(CONCAT('%', :search, '%'))")
     List<DeviceEntity> findByNameContainingIgnoreCase(String search);
 
-    @Query("SELECT d FROM DeviceEntity d LEFT JOIN FETCH d.thresholdEntities LEFT JOIN FETCH d.notifications")
-    List<DeviceEntity> findAll(); // Override to fetch eagerly
 
 }

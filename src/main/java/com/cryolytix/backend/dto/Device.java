@@ -13,7 +13,5 @@ public class Device {
     private String code;
     private String name;
     private String description;
-    private List<Threshold> thresholds = new ArrayList<>();
-    private List<Notification> notifications = new ArrayList<>();
 
 }
