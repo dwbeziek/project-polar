@@ -3,8 +3,8 @@ package com.cryolytix.backend.services;
 import com.cryolytix.backend.dto.DeviceData;
 import com.cryolytix.backend.entities.*;
 import com.cryolytix.backend.repositories.*;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -71,17 +71,15 @@ public class DeviceDataService {
         sensorDataRepository.saveAll(sensorDataEntityList);
     }
 
+    @Transactional(readOnly = true)
     public List<DeviceData> getLatestDeviceData(Long deviceId) {
         return deviceDataRepository.findTop1ByDeviceIdOrderByTimestampDesc(deviceId)
                 .stream()
-                .peek(deviceDataEntity -> {
-                    Hibernate.initialize(deviceDataEntity.getDevice().getThresholdEntities());
-                    Hibernate.initialize(deviceDataEntity.getDevice().getNotifications());
-                })
                 .map(DeviceDataEntity::toDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<DeviceData> getDeviceDataHistory(Long deviceId, String period) {
         LocalDateTime startTime;
         int limit;
@@ -105,10 +103,6 @@ public class DeviceDataService {
         return deviceDataRepository.findByDeviceIdAndTimestampAfterOrderByTimestampDesc(deviceId, startTime)
                 .stream()
                 .limit(limit)
-                .peek(deviceDataEntity -> {
-                    Hibernate.initialize(deviceDataEntity.getDevice().getThresholdEntities());
-                    Hibernate.initialize(deviceDataEntity.getDevice().getNotifications());
-                })
                 .map(DeviceDataEntity::toDto)
                 .collect(Collectors.toList());
     }
