@@ -8,6 +8,7 @@ import com.cryolytix.backend.repositories.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ public class DeviceService {
 
     private final DeviceRepository deviceRepository;
 
+    @Transactional
     public Device createDevice(Device device) {
         if (deviceRepository.findByImei(device.getImei()).isPresent()) {
             throw new IllegalArgumentException("Device with IMEI already exists.");
@@ -34,6 +36,7 @@ public class DeviceService {
         return deviceRepository.save(deviceEntity).toDto() ;
     }
 
+    @Transactional
     public Device updateDevice(Long id, Device device) {
 
         Optional<DeviceEntity> deviceOptional = deviceRepository.findById(id);
@@ -48,22 +51,7 @@ public class DeviceService {
         return deviceRepository.save(deviceEntity).toDto();
     }
 
-    public Optional<Device> findByImei(String imei) {
-        return deviceRepository.findByImei(imei).map(DeviceEntity::toDto);
-    }
-
-    public Optional<Device> findById(Long id) {
-        return deviceRepository.findById(id).map(DeviceEntity::toDto);
-    }
-
-    public List<Device> getAllDevices() {
-        return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
-    }
-
-    public List<Device> getDevices(String search) {
-        return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
-    }
-
+    @Transactional
     public void deleteDevice(Long id) {
         Optional<DeviceEntity> deviceOptional = deviceRepository.findById(id);
         if (!deviceOptional.isPresent()) {
@@ -72,8 +60,24 @@ public class DeviceService {
         deviceRepository.deleteById(id);
     }
 
-//    public List<Device> search(String code, String name, String description) {
-//        deviceRepository.searchAllBy
-//        return null;
-//    }
+    @Transactional(readOnly = true)
+    public Optional<Device> findByImei(String imei) {
+        return deviceRepository.findByImei(imei).map(DeviceEntity::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Device> findById(Long id) {
+        return deviceRepository.findById(id).map(DeviceEntity::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Device> getAllDevices() {
+        return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Device> getDevices(String search) {
+        return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
+    }
+
 }
