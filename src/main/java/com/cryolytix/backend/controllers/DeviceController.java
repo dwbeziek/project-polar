@@ -26,10 +26,15 @@ public class DeviceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Device> getDeviceById(@PathVariable Long id) {
-        return deviceService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Device> getDeviceById(@PathVariable("id") String id) {
+        try {
+            Long deviceId = Long.parseLong(id);
+            return deviceService.findById(deviceId)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/byImei/{imei}")
@@ -55,14 +60,25 @@ public class DeviceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Device> updateDevice(@PathVariable Long id, @RequestBody Device device) {
-        return ResponseEntity.ok(deviceService.updateDevice(id, device));
+    public ResponseEntity<Device> updateDevice(@PathVariable("id") String id, @RequestBody Device device) {
+        try {
+            Long deviceId = Long.parseLong(id);
+            device.setId(deviceId);
+            return ResponseEntity.ok(deviceService.updateDevice(deviceId, device));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
-        deviceService.deleteDevice(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteDevice(@PathVariable("id") String id) {
+        try {
+            Long deviceId = Long.parseLong(id);
+            deviceService.deleteDevice(deviceId);
+            return ResponseEntity.noContent().build();
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }

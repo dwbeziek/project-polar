@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+
+
 @RestController
 @RequestMapping("/api/device-data")
 public class DeviceDataController {
@@ -19,15 +23,25 @@ public class DeviceDataController {
     }
 
     @GetMapping("/{deviceId}/latest")
-    public ResponseEntity<DeviceDataResponse> getLatestDeviceData(@PathVariable Long deviceId) {
-        var latest = deviceDataService.getLatestDeviceData(deviceId);
-        return latest.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(new DeviceDataResponse(latest));
+    public ResponseEntity<DeviceDataResponse> getLatestDeviceData(@PathVariable("deviceId") String deviceId) {
+        try {
+            Long id = Long.parseLong(deviceId);
+            var latest = deviceDataService.getLatestDeviceData(id);
+            return latest.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(new DeviceDataResponse(latest));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(new DeviceDataResponse(Collections.emptyList()));
+        }
     }
 
     @GetMapping("/{deviceId}")
-    public DeviceDataResponse getDeviceDataHistory(@PathVariable Long deviceId) {
-        var history = deviceDataService.getDeviceDataHistory(deviceId);
-        return new DeviceDataResponse(history);
+    public DeviceDataResponse getDeviceDataHistory(@PathVariable("deviceId") String deviceId) {
+        try {
+            Long id = Long.parseLong(deviceId);
+            var history = deviceDataService.getDeviceDataHistory(id);
+             return new DeviceDataResponse(history);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(new DeviceDataResponse(Collections.emptyList())).getBody();
+        }
     }
 
     @GetMapping("/live")
