@@ -6,7 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "notification_t")
 @Data
 public class NotificationEntity {
 
@@ -14,14 +14,20 @@ public class NotificationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String message;
-    private boolean read;
 
-    private LocalDateTime timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id")
     private DeviceEntity device;
+
+    @Column(nullable = false)
+    private String message;
+
+    @Column(nullable = false)
+    private boolean read;
+
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
 
     public Notification toDto() {
         Notification notification = new Notification();

@@ -9,7 +9,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Entity
+@Entity(name = "threshold_t")
 @Data
 public class ThresholdEntity {
 
@@ -17,17 +17,22 @@ public class ThresholdEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", nullable = false)
     private DeviceEntity device;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "sensor_type", nullable = false)
     private SensorType sensorType;  // E.g., TEMPERATURE, HUMIDITY, etc.
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "threshold_type", nullable = false)
     private ThresholdType thresholdType;  // E.g., HIGH, LOW, RANGE, etc.
 
-    private BigDecimal minValue;  // Minimum threshold value
+    @Column(name = "min_value")
+    private BigDecimal minValue;
+
+    @Column(name = "max_value")// Minimum threshold value
     private BigDecimal maxValue;  // Maximum threshold value
 
     @Enumerated(EnumType.STRING)

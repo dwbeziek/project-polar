@@ -7,7 +7,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Entity
+@Entity(name = "sensor_data_t")
 @Data
 public class SensorDataEntity {
 
@@ -15,13 +15,15 @@ public class SensorDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_data_id", nullable = false)
     private DeviceDataEntity deviceDataEntity;
 
+    @Column(name = "parameter_code", nullable = false)
     private String parameterCode; // The actual sensor parameter code (e.g., "10800" for temperature)
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "sensor_type", nullable = false)
     private SensorType sensorType; // Temperature, Humidity, Movement, Battery, etc.
 
     private BigDecimal value; // Sensor value (temperature, humidity, etc.)
@@ -31,7 +33,6 @@ public class SensorDataEntity {
     public SensorData toDto() {
         SensorData sensorData = new SensorData();
         sensorData.setId(id);
-        sensorData.setDeviceDataId(deviceDataEntity.getId());
         sensorData.setParameterCode(parameterCode);
         sensorData.setSensorType(sensorType);
         sensorData.setValue(value);

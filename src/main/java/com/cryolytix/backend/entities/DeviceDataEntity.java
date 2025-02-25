@@ -7,8 +7,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Entity
+@Entity(name = "device_data_t")
 @Data
 public class DeviceDataEntity {
 
@@ -16,10 +17,11 @@ public class DeviceDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", nullable = false)
     private DeviceEntity device;
 
+    @Column(nullable = false)
     private LocalDateTime timestamp;
     private double latitude;
     private double longitude;
@@ -28,7 +30,7 @@ public class DeviceDataEntity {
     private int satellites;
     private int speed;
 
-    @OneToMany(mappedBy = "deviceDataEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "deviceDataEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SensorDataEntity> sensorDataEntityList = new ArrayList<>();
 
     public DeviceData toDto() {
@@ -43,11 +45,7 @@ public class DeviceDataEntity {
         deviceData.setAngle(angle);
         deviceData.setSatellites(satellites);
         deviceData.setSpeed(speed);
-
-//        TODO - Darrol fix th epopualtyion of sensor data
-        for (SensorDataEntity sensorDataEntity : sensorDataEntityList) {
-            deviceData.getSensorData().add(sensorDataEntity.toDto());
-        }
+        deviceData.setSensorData(sensorDataEntityList.stream().map(SensorDataEntity::toDto).collect(Collectors.toList()));
 
         return deviceData;
     }

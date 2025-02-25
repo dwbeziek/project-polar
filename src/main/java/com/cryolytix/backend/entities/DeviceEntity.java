@@ -4,10 +4,7 @@ import com.cryolytix.backend.dto.Device;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
+@Entity(name = "device_t")
 @Data
 public class DeviceEntity {
 
@@ -26,12 +23,6 @@ public class DeviceEntity {
 
     private String description;
 
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ThresholdEntity> thresholdEntities= new ArrayList<>();
-
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL)
-    private List<NotificationEntity> notifications = new ArrayList<>();
-
     public Device toDto() {
         Device device = new Device();
         device.setId(id);
@@ -39,16 +30,6 @@ public class DeviceEntity {
         device.setCode(code);
         device.setName(name);
         device.setDescription(description);
-
-        for (ThresholdEntity thresholdEntity : thresholdEntities) {
-            device.getThresholds().add(thresholdEntity.toDto());
-        }
-
-        for (NotificationEntity notificationEntity : notifications) {
-            device.getNotifications().add(notificationEntity.toDto());
-        }
-
-
         return device;
     }
 }
