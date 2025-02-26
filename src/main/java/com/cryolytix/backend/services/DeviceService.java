@@ -6,30 +6,24 @@ import com.cryolytix.backend.exceptions.ResourceNotFoundException;
 import com.cryolytix.backend.repositories.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DeviceService implements PaginatedService<DeviceEntity>{
+public class DeviceService {
 
     private final DeviceRepository deviceRepository;
 
     @Transactional
     public Device createDevice(Device device) {
-        if (getDeviceByImei(device.getImei()).isPresent()) {
+        if (deviceRepository.findByImei(device.getImei()).isPresent()) {
             throw new IllegalArgumentException("Device with IMEI already exists.");
         }
 
@@ -66,19 +60,10 @@ public class DeviceService implements PaginatedService<DeviceEntity>{
         deviceRepository.deleteById(id);
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public Page<DeviceEntity> findAll(Map<String, String> params, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        String name = params.getOrDefault("name", "").trim();
-        String imei = params.getOrDefault("imei", "").trim();
-        String code = params.getOrDefault("code", "").trim();
-
-        if (name.isEmpty() && imei.isEmpty() && code.isEmpty()) {
-            deviceRepository.findAll(pageable).stream().map(DeviceEntity::toDto).collect(toList());
-        }
-        return deviceRepository.findBySearchParams(name, imei, code, pageable).stream().map(DeviceEntity::toDto).collect(toList());
-
+    public List<Device> getDevices(String search) {
+        return ObjectUtils.isEmpty(search) ? deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList())
+                : deviceRepository.findByNameContainingIgnoreCase(search).stream().map(DeviceEntity::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
