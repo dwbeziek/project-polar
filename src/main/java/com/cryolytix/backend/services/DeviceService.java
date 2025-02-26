@@ -1,9 +1,9 @@
 package com.cryolytix.backend.services;
 
 import com.cryolytix.backend.dto.Device;
-import com.cryolytix.backend.entities.DeviceEntity;
+import com.cryolytix.backend.entity.DeviceEntity;
 import com.cryolytix.backend.exceptions.ResourceNotFoundException;
-import com.cryolytix.backend.repositories.DeviceRepository;
+import com.cryolytix.backend.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

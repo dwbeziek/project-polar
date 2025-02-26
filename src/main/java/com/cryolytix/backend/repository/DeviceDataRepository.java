@@ -1,8 +1,7 @@
-package com.cryolytix.backend.repositories;
+package com.cryolytix.backend.repository;
 
-import com.cryolytix.backend.entities.DeviceDataEntity;
+import com.cryolytix.backend.entity.DeviceDataEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

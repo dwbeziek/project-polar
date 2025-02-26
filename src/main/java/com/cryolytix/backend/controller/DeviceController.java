@@ -1,4 +1,4 @@
-package com.cryolytix.backend.controllers;
+package com.cryolytix.backend.controller;
 
 import com.cryolytix.backend.dto.Device;
 import com.cryolytix.backend.model.DeviceResponse;

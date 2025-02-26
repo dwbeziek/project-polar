@@ -1,7 +1,6 @@
 package com.cryolytix.backend.model;
 
 import com.cryolytix.backend.dto.DeviceData;
-import com.cryolytix.backend.entities.DeviceDataEntity;
 import lombok.Data;
 
 import java.util.List;

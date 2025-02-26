@@ -1,7 +1,7 @@
-package com.cryolytix.backend.repositories;
+package com.cryolytix.backend.repository;
 
-import com.cryolytix.backend.entities.DeviceEntity;
-import com.cryolytix.backend.entities.ThresholdEntity;
+import com.cryolytix.backend.entity.DeviceEntity;
+import com.cryolytix.backend.entity.ThresholdEntity;
 import com.cryolytix.backend.enums.SensorType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,8 +1,8 @@
 package com.cryolytix.backend.services;
 
 import com.cryolytix.backend.dto.Notification;
-import com.cryolytix.backend.entities.NotificationEntity;
-import com.cryolytix.backend.repositories.NotificationRepository;
+import com.cryolytix.backend.entity.NotificationEntity;
+import com.cryolytix.backend.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.cryolytix.backend.controllers;
+package com.cryolytix.backend.controller;
 
 import com.cryolytix.backend.model.DeviceDataResponse;
 import com.cryolytix.backend.services.DeviceDataService;
@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 
 @RestController

@@ -1,4 +1,4 @@
-package com.cryolytix.backend.controllers;
+package com.cryolytix.backend.controller;
 
 public class DeviceMapper {
 

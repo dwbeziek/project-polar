@@ -1,4 +1,4 @@
-package com.cryolytix.backend.entities;
+package com.cryolytix.backend.entity;
 
 import com.cryolytix.backend.dto.Device;
 import jakarta.persistence.*;

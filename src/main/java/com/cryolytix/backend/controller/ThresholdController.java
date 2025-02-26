@@ -1,4 +1,4 @@
-package com.cryolytix.backend.controllers;
+package com.cryolytix.backend.controller;
 
 import com.cryolytix.backend.dto.Threshold;
 import com.cryolytix.backend.services.ThresholdService;

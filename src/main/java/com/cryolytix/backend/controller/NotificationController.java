@@ -1,9 +1,7 @@
-package com.cryolytix.backend.controllers;
+package com.cryolytix.backend.controller;
 
 import com.cryolytix.backend.dto.Notification;
-import com.cryolytix.backend.dto.Threshold;
 import com.cryolytix.backend.services.NotificationService;
-import com.cryolytix.backend.services.ThresholdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

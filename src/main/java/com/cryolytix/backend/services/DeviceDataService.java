@@ -1,8 +1,8 @@
 package com.cryolytix.backend.services;
 
 import com.cryolytix.backend.dto.DeviceData;
-import com.cryolytix.backend.entities.*;
-import com.cryolytix.backend.repositories.*;
+import com.cryolytix.backend.entity.*;
+import com.cryolytix.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

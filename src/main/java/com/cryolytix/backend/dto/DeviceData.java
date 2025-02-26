@@ -1,9 +1,6 @@
 package com.cryolytix.backend.dto;
 
 
-import com.cryolytix.backend.entities.DeviceDataEntity;
-import com.cryolytix.backend.entities.SensorDataEntity;
-import com.cryolytix.backend.entities.ThresholdEntity;
 import lombok.Data;
 
 import java.time.LocalDateTime;

@@ -1,10 +1,10 @@
 package com.cryolytix.backend.services;
 
 import com.cryolytix.backend.dto.Threshold;
-import com.cryolytix.backend.entities.DeviceEntity;
-import com.cryolytix.backend.entities.ThresholdEntity;
-import com.cryolytix.backend.repositories.DeviceRepository;
-import com.cryolytix.backend.repositories.ThresholdRepository;
+import com.cryolytix.backend.entity.DeviceEntity;
+import com.cryolytix.backend.entity.ThresholdEntity;
+import com.cryolytix.backend.repository.DeviceRepository;
+import com.cryolytix.backend.repository.ThresholdRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
