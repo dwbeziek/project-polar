@@ -133,7 +133,6 @@ public class DeviceDataService {
                 notification.setRead(false);
                 notification.setTimestamp(LocalDateTime.now());
                 notificationRepository.save(notification);
-                System.out.printf("Notification sent: {%s}", alertMessage);
 
             }
         }
