@@ -61,9 +61,11 @@ public class DeviceService {
     }
 
     @Transactional(readOnly = true)
-    public List<Device> getDevices(String search) {
-        return ObjectUtils.isEmpty(search) ? deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList())
-                : deviceRepository.findByNameContainingIgnoreCase(search).stream().map(DeviceEntity::toDto).collect(Collectors.toList());
+    public List<Device> getDevices(String name, String imei, String code) {
+        if (ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(imei) && ObjectUtils.isEmpty(code)) {
+            return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
+        }
+        return deviceRepository.findByNameOrImeiOrCode(name, imei, code).stream().map(DeviceEntity::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

@@ -18,11 +18,15 @@ public class DeviceController {
         this.deviceService = deviceService;
     }
 
-    @GetMapping("")
-    public DeviceResponse getDevices(@RequestParam(required = false) String search) {
-        List<Device> devices = deviceService.getDevices(search);
-        return new DeviceResponse(devices);
 
+    @GetMapping("")
+    public DeviceResponse getDevices(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String imei,
+            @RequestParam(required = false) String code
+    ) {
+        List<Device> devices = deviceService.getDevices(name, imei, code);
+        return new DeviceResponse(devices);
     }
 
     @GetMapping("/{id}")
@@ -36,14 +40,6 @@ public class DeviceController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-//    @GetMapping("/byImei/{imei}")
-//    public ResponseEntity<Device> getDeviceByImei(@PathVariable String imei) {
-//        return deviceService.getDeviceByImei(imei)
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
-
 
     @PostMapping("")
     public ResponseEntity<Device> createDevice(@RequestBody Device device) {
