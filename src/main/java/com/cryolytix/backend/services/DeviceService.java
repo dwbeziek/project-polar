@@ -65,7 +65,7 @@ public class DeviceService {
         if (ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(imei) && ObjectUtils.isEmpty(code)) {
             return deviceRepository.findAll().stream().map(DeviceEntity::toDto).collect(Collectors.toList());
         }
-        return deviceRepository.findByNameOrImeiOrCode(name, imei, code).stream().map(DeviceEntity::toDto).collect(Collectors.toList());
+        return deviceRepository.findByNameContainingIgnoreCaseOrImeiContainingIgnoreCaseOrCodeContainingIgnoreCase(name, imei, code).stream().map(DeviceEntity::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
