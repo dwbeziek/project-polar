@@ -19,7 +19,7 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping("/device/{deviceId}")
-    public ResponseEntity<List<Notification>> getThresholds(@PathVariable("deviceId") Long deviceId) {
+    public ResponseEntity<List<Notification>> getNotifications(@PathVariable("deviceId") Long deviceId) {
         return ResponseEntity.ok(notificationService.getNotificationsByDevice(deviceId));
     }
 
