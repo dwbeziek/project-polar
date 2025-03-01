@@ -27,7 +27,7 @@ public class NotificationService {
 
     @Transactional(readOnly = true)
     public List<Notification> getNotificationsByDevice(Long deviceId) {
-        return notificationRepository.findAll().stream().map(NotificationEntity::toDto).collect(Collectors.toList());
+        return notificationRepository.findByDeviceId(deviceId).stream().map(NotificationEntity::toDto).collect(Collectors.toList());
     }
 
 }
